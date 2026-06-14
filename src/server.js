@@ -12,7 +12,6 @@ import routerAuth from './routers/Auth_routes.js';
 import routerTutoria from './routers/Tutoria_routes.js';
 import routerBus from './routers/Bus_routes.js';
 
-
 const app = express()
 connection()
 

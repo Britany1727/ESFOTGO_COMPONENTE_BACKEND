@@ -12,11 +12,6 @@ const oficinaSchema = new Schema({
         trim: true
     },
 
-    edificio: {
-        type: String,
-        required: true,
-        trim: true
-    },
     encargado: {
         type: String,
         trim: true

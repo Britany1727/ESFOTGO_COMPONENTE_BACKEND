@@ -25,7 +25,7 @@ routerAdmins.get('/admin/perfil',verificarTokenJWT,perfilAdmin)
 routerAdmins.put('/admin/actualizarperfil/:id',verificarTokenJWT,actualizarPerfilAdmin)
 routerAdmins.put('/admin/actualizarpassword/:id',verificarTokenJWT,actualizarPasswordAdmin)
 
-//EVENTOS
+//EVENTos
 routerAdmins.post('/admin/evento', validarMiddleware(validarEvento), crearEvento)
 routerAdmins.put('/admin/actualizarevento/:id',actualizarEvento)
 routerAdmins.delete('/admin/eliminarevento/:id',eliminarEvento)
@@ -41,6 +41,7 @@ routerAdmins.put('/admin/actualizaroficina/:id',verificarTokenJWT,actualizarOfic
 routerAdmins.delete('/admin/eliminaroficina/:id',verificarTokenJWT,eliminarOficina)
 routerAdmins.get('/admin/oficinas',listarOficinas)
 //AULAS
+
 routerAdmins.post('/admin/aula', verificarTokenJWT, validarMiddleware(validarAula), crearAulas)
 routerAdmins.get('/aulas',verificarTokenJWT,listarAulas)
 routerAdmins.get('/veraula/:id',verificarTokenJWT,verAula)

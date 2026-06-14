@@ -3,15 +3,17 @@ import { sendMailToRecoveryPassword } from "../helpers/sendMail.js"
 import { crearTokenJWT, crearRefreshTokenJWT, guardarRefreshToken } from "../middlewares/JWT.js"
 import { successResponse, errorResponse } from "../helpers/response.js"
 import mongoose from "mongoose"
+import { subirImagenDocente, subirBase64Docente } from "../helpers/uploadCloudinary.js"
+import bcrypt from "bcryptjs"
 
 
 
 const registroDocente = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, telefono, password } = req.body;
 
-        if (!email || !password) {
-            return errorResponse(res, "Lo sentimos, debes llenar todos los campos", 400);
+        if (!email || !telefono || !password) {
+            return errorResponse(res, "Lo sentimos, debes llenar email, telefono y password", 400);
         }
 
         const docenteBDD = await Docente.findOne({ email });
@@ -20,10 +22,14 @@ const registroDocente = async (req, res) => {
             return errorResponse(res, "Lo sentimos, tu correo no está autorizado. Contacta al administrador.", 403);
         }
 
-        if (docenteBDD.password != null && docenteBDD.password !== "") {
+        
+        const esPasswordPorDefecto = await bcrypt.compare('', docenteBDD.password); 
+
+        if (!esPasswordPorDefecto) {
             return errorResponse(res, "Esta cuenta ya se encuentra activa", 400);
         }
 
+        docenteBDD.telefono = telefono
         docenteBDD.password = await docenteBDD.encryptPassword(password);
 
         if (req.files?.subirImagenDocente) {

@@ -11,7 +11,8 @@ import Docente from "../models/Docente.js"
 import { 
     subirImagenEvento, subirBase64Evento, 
     subirImagenOficina, subirBase64Oficina, 
-    subirImagenAula, subirBase64Aula 
+    subirImagenAula, subirBase64Aula,
+    subirImagenAdmin, subirBase64Admin 
 } from "../helpers/uploadCloudinary.js"
 
 // ==========================================

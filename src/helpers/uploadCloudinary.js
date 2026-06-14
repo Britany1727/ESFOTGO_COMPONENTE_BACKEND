@@ -96,5 +96,11 @@ export {
     subirImagenAula,
     subirBase64Aula,
     subirImagenEvento,
-    subirBase64Evento
+    subirBase64Evento,
+    subirImagenAdmin,
+    subirBase64Admin,
+    subirImagenDocente,
+    subirBase64Docente,
+    subirImagenEstudiante,
+    subirBase64Estudiante
 }

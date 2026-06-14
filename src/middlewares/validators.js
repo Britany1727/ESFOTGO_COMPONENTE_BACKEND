@@ -24,19 +24,10 @@ export const validarPassword = (password) => {
 
 export const validarRegistroEstudiante = (body) => {
   const errors = []
-  const { nombre, apellido, telefono, acceptTerms, email, password } = body
+  const { telefono, email, password } = body
 
-  if (!nombre || nombre.trim().length < 3 || nombre.trim().length > 100) {
-    errors.push('El nombre debe tener entre 3 y 100 caracteres')
-  }
-  if (!apellido || apellido.trim().length < 1 || apellido.trim().length > 100) {
-    errors.push('El apellido debe tener entre 1 y 100 caracteres')
-  }
-  if (telefono && !/^[0-9]{10}$/.test(telefono)) {
+  if (!telefono || !/^[0-9]{10}$/.test(telefono)) {
     errors.push('El teléfono debe tener exactamente 10 dígitos')
-  }
-  if (acceptTerms !== true) {
-    errors.push('Debes aceptar los términos y condiciones')
   }
 
   const emailError = validarEmailEstudiante(email)
@@ -50,15 +41,9 @@ export const validarRegistroEstudiante = (body) => {
 
 export const validarRegistroDocente = (body) => {
   const errors = []
-  const { nombre, apellido, telefono, password } = body
+  const { telefono, password } = body
 
-  if (!nombre || nombre.trim().length < 3 || nombre.trim().length > 100) {
-    errors.push('El nombre debe tener entre 3 y 100 caracteres')
-  }
-  if (!apellido || apellido.trim().length < 1 || apellido.trim().length > 100) {
-    errors.push('El apellido debe tener entre 1 y 100 caracteres')
-  }
-  if (telefono && !/^[0-9]{10}$/.test(telefono)) {
+  if (!telefono || !/^[0-9]{10}$/.test(telefono)) {
     errors.push('El teléfono debe tener exactamente 10 dígitos')
   }
 
