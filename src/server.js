@@ -13,7 +13,6 @@ import routerTutoria from './routers/Tutoria_routes.js';
 import routerBus from './routers/Bus_routes.js';
 
 const app = express()
-connection()
 
 // Configuraciones Cloudinary
 cloudinary.config({
@@ -34,7 +33,7 @@ app.use(cors({
 
 app.use(fileUpload({
     useTempFiles : true,
-    tempFileDir : './uploads'
+    tempFileDir : process.env.VERCEL ? '/tmp' : './uploads'
 }))
 
 // Variables globales

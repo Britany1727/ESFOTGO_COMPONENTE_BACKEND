@@ -1,13 +1,11 @@
-
 import {Router} from 'express'
-
 import { actualizarAula, actualizarEvento, actualizarOficina, actualizarPasswordAdmin, actualizarPerfilAdmin, buscarDocente, buscarEstudiante, comprobarTokenPasswordAdmin, crearAulas, crearEvento, crearNuevoPasswordAdmin, crearOficinas, eliminarAula, eliminarDocente, eliminarEstudiante, eliminarEvento, eliminarOficina, listarAulas, listarDocentes, listarEstudiantes, listarEventos, listarOficinas, loginAdmin, perfilAdmin, recuperarPasswordAdmin, registroAdmin, verAula, verDocente, verEstudiante, verEvento, verOficina, crearEstudianteAdmin, crearDocenteAdmin } from '../controllers/admin_controllers.js'
 import { verificarTokenJWT } from '../middlewares/JWT.js'
 import { validarEvento, validarAula, validarMiddleware } from '../middlewares/validators.js'
 import { uploadExcel } from '../controllers/upload_controllers.js'
 import { actualizarPerfilDocente } from '../controllers/docente_controllers.js'
 import { actualizarPerfilEstudiante } from '../controllers/estudiante_controllers.js'
-import { subirFotoPanoramica } from '../controllers/mapa_controllers.js';
+import { subirFotoPanoramica, crearEdificio, listarEdificios, verEdificio, actualizarEdificio, eliminarEdificio } from '../controllers/mapa_controllers.js';
 
 
 
@@ -32,7 +30,12 @@ routerAdmins.delete('/admin/eliminarevento/:id',eliminarEvento)
 routerAdmins.get('/eventos',listarEventos)
 routerAdmins.get('/verevento/:id',verificarTokenJWT,verEvento)
 
-
+//EDIFICIOS
+routerAdmins.post('/admin/edificio', verificarTokenJWT, crearEdificio)
+routerAdmins.get('/admin/edificios', verificarTokenJWT, listarEdificios)
+routerAdmins.get('/admin/edificio/:id', verificarTokenJWT, verEdificio)
+routerAdmins.put('/admin/edificio/:id', verificarTokenJWT, actualizarEdificio)
+routerAdmins.delete('/admin/edificio/:id', verificarTokenJWT, eliminarEdificio)
 //OFICINAS
 routerAdmins.post('/admin/oficina',verificarTokenJWT,crearOficinas)
 routerAdmins.get('/oficinas',verificarTokenJWT,listarOficinas)
@@ -40,8 +43,8 @@ routerAdmins.get('/veroficina/:id',verificarTokenJWT,verOficina)
 routerAdmins.put('/admin/actualizaroficina/:id',verificarTokenJWT,actualizarOficina)
 routerAdmins.delete('/admin/eliminaroficina/:id',verificarTokenJWT,eliminarOficina)
 routerAdmins.get('/admin/oficinas',listarOficinas)
-//AULAS
 
+//AULAS
 routerAdmins.post('/admin/aula', verificarTokenJWT, validarMiddleware(validarAula), crearAulas)
 routerAdmins.get('/aulas',verificarTokenJWT,listarAulas)
 routerAdmins.get('/veraula/:id',verificarTokenJWT,verAula)
