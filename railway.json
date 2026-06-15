@@ -6,6 +6,6 @@
   "deploy": {
     "startCommand": "node src/index.js",
     "healthcheckPath": "/",
-    "restartPolicyType": "on-failure"
+    "restartPolicyType": "ON_FAILURE"
   }
 }
