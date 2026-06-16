@@ -4,6 +4,7 @@ import { crearTokenJWT, crearRefreshTokenJWT, guardarRefreshToken } from "../mid
 import { successResponse, errorResponse } from "../helpers/response.js"
 import mongoose from "mongoose"
 import { subirImagenEstudiante, subirBase64Estudiante } from "../helpers/uploadCloudinary.js"
+import bcrypt from "bcryptjs"
 
 const registroEstudiante = async (req, res) => {
     try {
@@ -34,7 +35,7 @@ const registroEstudiante = async (req, res) => {
         }
 
         if (req.body.subirBase64Estudiante) {
-            const secure_url = await subirBase64Estudiante(req.body.subirBase64Docente);
+            const secure_url = await subirBase64Estudiante(req.body.subirBase64Estudiante);
             estudianteBDD.imagen = secure_url;
         }
 

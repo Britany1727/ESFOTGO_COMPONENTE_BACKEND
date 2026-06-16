@@ -8,8 +8,6 @@ import { actualizarPerfilEstudiante } from '../controllers/estudiante_controller
 import { subirFotoPanoramica, crearEdificio, listarEdificios, verEdificio, actualizarEdificio, eliminarEdificio } from '../controllers/mapa_controllers.js';
 
 
-
-
 const routerAdmins= Router()
 
 //REGISTRO Y AUTENTICACIÓN
