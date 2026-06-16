@@ -1,12 +1,8 @@
 import sendMail from "../config/nodemailer.js"
 
-
-
-
 const sendMailToRecoveryPassword = (userMail, token) => {
-    
 
-    return sendMail(      
+    return sendMail(
 
         userMail,
         " 🔒Restablece tu contraseña🔒",
@@ -17,7 +13,7 @@ const sendMailToRecoveryPassword = (userMail, token) => {
 
             Restablecer contraseña
             </a>
-            <hr>                    
+            <hr>
             <footer>El equipo de EsfotGo te da la más cordial bienvenida.</footer>
         `
     )
