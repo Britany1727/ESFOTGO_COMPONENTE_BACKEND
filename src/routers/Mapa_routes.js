@@ -23,8 +23,17 @@ import {
 import {
     listarUbicaciones,
     listarUbicacionesPorCategoria,
-    verUbicacion
+    verUbicacion,
+    crearUbicacion,
+    actualizarUbicacion,
+    eliminarUbicacion
 } from '../controllers/ubicacion_controllers.js';
+import {
+    listarZonas,
+    crearZona,
+    actualizarZona,
+    eliminarZona
+} from '../controllers/zona_controllers.js';
 import {
     listarAristas,
     eliminarNodo,
@@ -77,5 +86,16 @@ routerMapa.post('/admin/mapa/conexion', verificarTokenJWT, crearConexion);
 routerMapa.post('/admin/mapa/grafo/aristas', verificarTokenJWT, crearConexion);
 routerMapa.put('/admin/mapa/grafo/aristas/:id', verificarTokenJWT, actualizarArista);
 routerMapa.delete('/admin/mapa/grafo/aristas/:id', verificarTokenJWT, eliminarArista);
+
+// UBICACIONES CRUD (admin)
+routerMapa.post('/admin/mapa/ubicaciones', verificarTokenJWT, crearUbicacion);
+routerMapa.put('/admin/mapa/ubicaciones/:id', verificarTokenJWT, actualizarUbicacion);
+routerMapa.delete('/admin/mapa/ubicaciones/:id', verificarTokenJWT, eliminarUbicacion);
+
+// ZONAS CRUD (admin)
+routerMapa.get('/admin/mapa/zonas', verificarTokenJWT, listarZonas);
+routerMapa.post('/admin/mapa/zonas', verificarTokenJWT, crearZona);
+routerMapa.put('/admin/mapa/zonas/:id', verificarTokenJWT, actualizarZona);
+routerMapa.delete('/admin/mapa/zonas/:id', verificarTokenJWT, eliminarZona);
 
 export default routerMapa;

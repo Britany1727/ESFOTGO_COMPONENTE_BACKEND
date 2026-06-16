@@ -37,6 +37,15 @@ const eventoSchema = new Schema({
         required:true,
         trim:true   
     },
+    categoria:{
+        type:String,
+        required:false,
+        trim:true
+    },
+    fecha_fin:{
+        type:Date,
+        required:false
+    },
     imagen:{
         type:String,
         required:false,

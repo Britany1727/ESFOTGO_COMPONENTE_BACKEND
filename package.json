@@ -1,7 +1,7 @@
 {
   "name": "esfotgo-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "\u0000",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
@@ -37,5 +37,13 @@
   "type": "module",
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Britany1727/ESFOTGO_COMPONENTE_BACKEND.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Britany1727/ESFOTGO_COMPONENTE_BACKEND/issues"
+  },
+  "homepage": "https://github.com/Britany1727/ESFOTGO_COMPONENTE_BACKEND#readme"
 }

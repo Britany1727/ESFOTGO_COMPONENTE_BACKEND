@@ -22,12 +22,14 @@ io.on('connection', (socket) => {
 
   socket.on('usuario-conectado', (userData) => {
     const { nombre, email, rol } = userData || {}
-    usuariosConectados.set(socket.id, {
+    const userInfo = {
       socketId: socket.id,
       nombre: nombre || 'Anónimo',
       email: email || '',
       rol: rol || 'invitado'
-    })
+    }
+    usuariosConectados.set(socket.id, userInfo)
+    socket.broadcast.emit('usuario-conectado', userInfo)
     io.emit('usuarios-online', Array.from(usuariosConectados.values()))
   })
 
@@ -53,7 +55,11 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('Usuario desconectado', socket.id)
+    const userData = usuariosConectados.get(socket.id)
     usuariosConectados.delete(socket.id)
+    if (userData) {
+      socket.broadcast.emit('usuario-desconectado', userData)
+    }
     io.emit('usuarios-online', Array.from(usuariosConectados.values()))
   })
 })

@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { verificarTokenJWT } from '../middlewares/JWT.js'
 import {
   listarRutas,
+  listarRutasAdmin,
   verRuta,
   crearRuta,
   actualizarRuta,
@@ -20,6 +21,7 @@ routerBus.get('/bus/rutas/:id', verRuta)
 routerBus.get('/bus/paradas/:routeId', listarParadas)
 routerBus.get('/bus/posiciones/:routeId', obtenerPosiciones)
 
+routerBus.get('/admin/bus/rutas', verificarTokenJWT, listarRutasAdmin)
 routerBus.post('/admin/bus/rutas', verificarTokenJWT, crearRuta)
 routerBus.put('/admin/bus/rutas/:id', verificarTokenJWT, actualizarRuta)
 routerBus.delete('/admin/bus/rutas/:id', verificarTokenJWT, eliminarRuta)

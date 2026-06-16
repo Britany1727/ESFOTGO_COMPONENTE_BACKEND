@@ -170,7 +170,8 @@ const actualizarPerfilDocente = async (req, res) => {
 
 const actualizarPasswordDocente = async (req, res) => {
     try {
-        const { passwordactual, passwordnuevo } = req.body
+        const passwordactual = req.body.passwordactual || req.body.currentPassword
+        const passwordnuevo = req.body.passwordnuevo || req.body.newPassword
         const docenteBDD = await Docente.findById(req.docenteHeader._id)
         if (!docenteBDD) return errorResponse(res, "Lo sentimos, no existe el docente", 404)
         const verificarPassword = await docenteBDD.matchPassword(passwordactual)

@@ -37,3 +37,55 @@ export const verUbicacion = async (req, res) => {
     return errorResponse(res, error.message)
   }
 }
+
+export const crearUbicacion = async (req, res) => {
+  try {
+    const { nombre, descripcion, categoria, latitud, longitud, imagen } = req.body
+    if (!nombre || !categoria || latitud === undefined || longitud === undefined) {
+      return errorResponse(res, "Debes proporcionar nombre, categoria, latitud y longitud", 400)
+    }
+    const nuevaUbicacion = new Ubicacion({ nombre, descripcion, categoria, latitud, longitud, imagen })
+    await nuevaUbicacion.save()
+    return successResponse(res, nuevaUbicacion, "Ubicación creada correctamente", 201)
+  } catch (error) {
+    return errorResponse(res, error.message)
+  }
+}
+
+export const actualizarUbicacion = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { nombre, descripcion, categoria, latitud, longitud, imagen } = req.body
+
+    const ubicacion = await Ubicacion.findById(id)
+    if (!ubicacion) {
+      return errorResponse(res, "La ubicación no existe", 404)
+    }
+
+    if (nombre !== undefined) ubicacion.nombre = nombre
+    if (descripcion !== undefined) ubicacion.descripcion = descripcion
+    if (categoria !== undefined) ubicacion.categoria = categoria
+    if (latitud !== undefined) ubicacion.latitud = latitud
+    if (longitud !== undefined) ubicacion.longitud = longitud
+    if (imagen !== undefined) ubicacion.imagen = imagen
+
+    await ubicacion.save()
+    return successResponse(res, ubicacion, "Ubicación actualizada correctamente")
+  } catch (error) {
+    return errorResponse(res, error.message)
+  }
+}
+
+export const eliminarUbicacion = async (req, res) => {
+  try {
+    const { id } = req.params
+    const ubicacion = await Ubicacion.findById(id)
+    if (!ubicacion) {
+      return errorResponse(res, "La ubicación no existe", 404)
+    }
+    await ubicacion.deleteOne()
+    return successResponse(res, null, "Ubicación eliminada correctamente")
+  } catch (error) {
+    return errorResponse(res, error.message)
+  }
+}

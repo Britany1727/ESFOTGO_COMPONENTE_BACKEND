@@ -6,6 +6,7 @@ import {
   crearTutoria,
   actualizarTutoria,
   eliminarTutoria,
+  listarInscripciones,
   inscribirTutoria,
   desinscribirTutoria
 } from '../controllers/tutoria_controllers.js'
@@ -17,6 +18,7 @@ routerTutoria.get('/admin/tutorias/:id', verificarTokenJWT, verTutoria)
 routerTutoria.post('/admin/tutoria', verificarTokenJWT, crearTutoria)
 routerTutoria.put('/admin/tutoria/:id', verificarTokenJWT, actualizarTutoria)
 routerTutoria.delete('/admin/tutoria/:id', verificarTokenJWT, eliminarTutoria)
+routerTutoria.get('/admin/tutoria/:id/inscripciones', verificarTokenJWT, listarInscripciones)
 routerTutoria.post('/admin/tutoria/:id/inscribir', verificarTokenJWT, inscribirTutoria)
 routerTutoria.delete('/admin/tutoria/:id/inscribir', verificarTokenJWT, desinscribirTutoria)
 

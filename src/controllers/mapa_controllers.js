@@ -176,7 +176,13 @@ export const buscarDestino = async (req, res) => {
 
 export const crearNodo = async (req, res) => {
     try {
-        const { nombre, tipo, coordenadas, piso, edificioId, referenciaId, referenciaModelo } = req.body;
+        let { nombre, tipo, coordenadas, piso, edificioId, referenciaId, referenciaModelo, label, latitude, longitude } = req.body;
+
+        if (!nombre && label) nombre = label;
+        if (!coordenadas && latitude !== undefined && longitude !== undefined) {
+            coordenadas = { lat: latitude, lng: longitude };
+        }
+        if (!tipo) tipo = "nodo";
 
         if (Object.values(req.body).includes("")) {
             return errorResponse(res, "Debes llenar todos los campos", 400);
@@ -192,9 +198,15 @@ export const crearNodo = async (req, res) => {
 
 export const crearConexion = async (req, res) => {
     try {
-        const { nodoOrigen, nodoDestino, distancia, unidireccional, tipo } = req.body;
+        let { nodoOrigen, nodoDestino, distancia, unidireccional, tipo, from_node_id, to_node_id, weight, bidirectional, blocked } = req.body;
 
-        if (!nodoOrigen || !nodoDestino || !distancia) {
+        if (from_node_id) nodoOrigen = from_node_id;
+        if (to_node_id) nodoDestino = to_node_id;
+        if (weight !== undefined) distancia = weight;
+        if (bidirectional !== undefined) unidireccional = !bidirectional;
+        if (blocked !== undefined) tipo = tipo || (blocked ? null : 'pasillo');
+
+        if (!nodoOrigen || !nodoDestino || distancia === undefined) {
             return errorResponse(res, "Debes proporcionar nodoOrigen, nodoDestino y distancia", 400);
         }
 

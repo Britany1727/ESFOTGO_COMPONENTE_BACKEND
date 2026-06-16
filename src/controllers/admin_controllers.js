@@ -184,7 +184,8 @@ const actualizarPerfilAdmin = async (req, res) => {
 
 const actualizarPasswordAdmin = async (req, res) => {
     try {
-        const { passwordactual, passwordnuevo } = req.body
+        const passwordactual = req.body.passwordactual || req.body.currentPassword
+        const passwordnuevo = req.body.passwordnuevo || req.body.newPassword
         const adminBDD = await Admin.findById(req.adminHeader._id)
         if (!adminBDD) return errorResponse(res, "Lo sentimos, no existe el administrador", 404)
 
@@ -206,12 +207,12 @@ const actualizarPasswordAdmin = async (req, res) => {
 
 const crearEvento = async (req, res) => {
     try {
-        const { nombre, informacion, fecha, hora, organizador, ubicacion, coordenadas } = req.body
+        const { nombre, informacion, fecha, hora, organizador, ubicacion, coordenadas, categoria, fecha_fin } = req.body
         if (!nombre || !informacion || !fecha || !hora || !organizador) {
             return errorResponse(res, "Lo sentimos, debes llenar nombre, informacion, fecha, hora y organizador", 400)
         }
 
-        const nuevoEvento = new Evento({ nombre, informacion, fecha, hora, organizador, ubicacion, coordenadas })
+        const nuevoEvento = new Evento({ nombre, informacion, fecha, hora, organizador, ubicacion, coordenadas, categoria, fecha_fin })
 
         if (req.files?.subirImagenEvento) {
             const { secure_url } = await subirImagenEvento(req.files.subirImagenEvento.tempFilePath)
@@ -233,7 +234,7 @@ const crearEvento = async (req, res) => {
 const actualizarEvento = async (req, res) => {
     try {
         const { id } = req.params
-        const { nombre, informacion, fecha, hora, organizador, ubicacion, coordenadas } = req.body
+        const { nombre, informacion, fecha, hora, organizador, ubicacion, coordenadas, categoria, fecha_fin } = req.body
 
         if (Object.values(req.body).includes("")) return errorResponse(res, "Lo sentimos, debes llenar todos los campos", 400)
 
@@ -247,6 +248,8 @@ const actualizarEvento = async (req, res) => {
         eventoBDD.informacion = informacion || eventoBDD.informacion
         eventoBDD.organizador = organizador || eventoBDD.organizador
         eventoBDD.coordenadas = coordenadas || eventoBDD.coordenadas
+        if (categoria !== undefined) eventoBDD.categoria = categoria
+        if (fecha_fin !== undefined) eventoBDD.fecha_fin = fecha_fin
 
         if (req.files?.subirImagenEvento) {
             const { secure_url } = await subirImagenEvento(req.files.subirImagenEvento.tempFilePath)

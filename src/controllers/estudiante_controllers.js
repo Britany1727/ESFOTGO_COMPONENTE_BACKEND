@@ -15,13 +15,15 @@ const registroEstudiante = async (req, res) => {
         }
 
         const estudianteBDD = await Estudiante.findOne({ email });
+        console.log('Password en BDD:', estudianteBDD.password);
 
         if (!estudianteBDD) {
             return errorResponse(res, "Lo sentimos, tu correo no está autorizado. Contacta al administrador.", 403);
         }
 
         
-        const esPasswordPorDefecto = await bcrypt.compare('', estudianteBDD.password); 
+        const esPasswordPorDefecto = await bcrypt.compare('', estudianteBDD.password);
+        console.log('¿Es password por defecto?', esPasswordPorDefecto); 
 
         if (!esPasswordPorDefecto) {
             return errorResponse(res, "Esta cuenta ya se encuentra activa", 400);
@@ -163,7 +165,8 @@ const actualizarPerfilEstudiante = async (req, res) => {
 
 const actualizarPasswordEstudiante = async (req, res) => {
     try {
-        const { passwordactual, passwordnuevo } = req.body;
+        const passwordactual = req.body.passwordactual || req.body.currentPassword;
+        const passwordnuevo = req.body.passwordnuevo || req.body.newPassword;
         const estudianteAutenticado = req.userHeader || req.docenteHeader || req.adminHeader;
         const estudianteBDD = await Estudiante.findById(estudianteAutenticado._id);
         const verificarPassword = await estudianteBDD.matchPassword(passwordactual);

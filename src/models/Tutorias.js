@@ -1,6 +1,10 @@
 import { Schema, model } from "mongoose"
 
 const tutoriaSchema = new Schema({
+  titulo: {
+    type: String,
+    trim: true
+  },
   docente: {
     type: String,
     required: true,
@@ -35,6 +39,19 @@ const tutoriaSchema = new Schema({
       }
     }
   ],
+  fecha: {
+    type: Date
+  },
+  duracion: {
+    type: Number
+  },
+  cupo_maximo: {
+    type: Number
+  },
+  creado_por: {
+    type: String,
+    trim: true
+  },
   estado: {
     type: String,
     enum: ['activo', 'inactivo', 'completo'],

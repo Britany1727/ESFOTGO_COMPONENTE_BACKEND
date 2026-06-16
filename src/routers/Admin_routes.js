@@ -21,7 +21,7 @@ routerAdmins.get('/admin/perfil',verificarTokenJWT,perfilAdmin)
 routerAdmins.put('/admin/actualizarperfil/:id',verificarTokenJWT,actualizarPerfilAdmin)
 routerAdmins.put('/admin/actualizarpassword/:id',verificarTokenJWT,actualizarPasswordAdmin)
 
-//EVENTos
+//EVENTOS
 routerAdmins.post('/admin/evento', validarMiddleware(validarEvento), crearEvento)
 routerAdmins.put('/admin/actualizarevento/:id',actualizarEvento)
 routerAdmins.delete('/admin/eliminarevento/:id',eliminarEvento)
@@ -60,6 +60,7 @@ routerAdmins.put('/actualizarEstudiante/:id',verificarTokenJWT,actualizarPerfilE
 routerAdmins.put('/admin/actualizarEstudiante/:id',verificarTokenJWT,actualizarPerfilEstudiante)
 routerAdmins.post('/admin/crearEstudiante',verificarTokenJWT,crearEstudianteAdmin)
 
+//
 
 //DOCENTES
 routerAdmins.get('/buscarDocente',buscarDocente)
@@ -76,5 +77,10 @@ routerAdmins.post('/admin/upload',verificarTokenJWT,uploadExcel)
 
 //MAPA
 routerAdmins.post('/admin/subirfotopanoramica/:id',verificarTokenJWT,subirFotoPanoramica)
+routerAdmins.post('/admin/mapa/edificio', verificarTokenJWT, crearEdificio)
+routerAdmins.get('/admin/mapa/edificios', verificarTokenJWT, listarEdificios)
+routerAdmins.get('/admin/mapa/edificio/:id', verificarTokenJWT, verEdificio)
+routerAdmins.put('/admin/mapa/edificio/:id', verificarTokenJWT, actualizarEdificio)
+routerAdmins.delete('/admin/mapa/edificio/:id', verificarTokenJWT, eliminarEdificio)
 
 export default routerAdmins

@@ -91,7 +91,8 @@ export const reenviarVerificacion = async (req, res) => {
 
 export const cambiarPassword = async (req, res) => {
   try {
-    const { passwordactual, passwordnuevo } = req.body
+    const passwordactual = req.body.passwordactual || req.body.currentPassword
+    const passwordnuevo = req.body.passwordnuevo || req.body.newPassword
     if (!passwordactual || !passwordnuevo) {
       return errorResponse(res, "Debes proporcionar password actual y nuevo password", 400)
     }

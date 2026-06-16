@@ -27,12 +27,12 @@ export const verTutoria = async (req, res) => {
 
 export const crearTutoria = async (req, res) => {
   try {
-    const { docente, oficina, informacion, horarios, estado } = req.body
+    const { titulo, docente, oficina, informacion, horarios, fecha, duracion, cupo_maximo, creado_por, estado } = req.body
     if (!docente || !oficina || !informacion || !horarios) {
       return errorResponse(res, "Lo sentimos, debes llenar docente, oficina, informacion y horarios", 400)
     }
 
-    const nuevaTutoria = new Tutoria({ docente, oficina, informacion, horarios, estado })
+    const nuevaTutoria = new Tutoria({ titulo, docente, oficina, informacion, horarios, fecha, duracion, cupo_maximo, creado_por, estado })
     await nuevaTutoria.save()
     return successResponse(res, nuevaTutoria, "Tutoría creada correctamente", 201)
   } catch (error) {
@@ -43,17 +43,22 @@ export const crearTutoria = async (req, res) => {
 export const actualizarTutoria = async (req, res) => {
   try {
     const { id } = req.params
-    const { docente, oficina, informacion, horarios, estado } = req.body
+    const { titulo, docente, oficina, informacion, horarios, fecha, duracion, cupo_maximo, creado_por, estado } = req.body
 
     const tutoria = await Tutoria.findById(id)
     if (!tutoria) {
       return errorResponse(res, "La tutoría no existe", 404)
     }
 
+    if (titulo !== undefined) tutoria.titulo = titulo
     if (docente !== undefined) tutoria.docente = docente
     if (oficina !== undefined) tutoria.oficina = oficina
     if (informacion !== undefined) tutoria.informacion = informacion
     if (horarios !== undefined) tutoria.horarios = horarios
+    if (fecha !== undefined) tutoria.fecha = fecha
+    if (duracion !== undefined) tutoria.duracion = duracion
+    if (cupo_maximo !== undefined) tutoria.cupo_maximo = cupo_maximo
+    if (creado_por !== undefined) tutoria.creado_por = creado_por
     if (estado !== undefined) tutoria.estado = estado
 
     await tutoria.save()
@@ -104,6 +109,22 @@ export const inscribirTutoria = async (req, res) => {
     const inscripcion = new Inscripcion({ tutoria_id: id, estudiante_id })
     await inscripcion.save()
     return successResponse(res, inscripcion, "Inscripción exitosa", 201)
+  } catch (error) {
+    return errorResponse(res, error.message)
+  }
+}
+
+export const listarInscripciones = async (req, res) => {
+  try {
+    const { id } = req.params
+    const tutoria = await Tutoria.findById(id)
+    if (!tutoria) {
+      return errorResponse(res, "La tutoría no existe", 404)
+    }
+    const inscripciones = await Inscripcion.find({ tutoria_id: id })
+      .populate('estudiante_id', 'nombre apellido email telefono imagen')
+      .sort({ created_at: -1 })
+    return successResponse(res, inscripciones)
   } catch (error) {
     return errorResponse(res, error.message)
   }
