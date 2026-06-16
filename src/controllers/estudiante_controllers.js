@@ -20,11 +20,12 @@ const registroEstudiante = async (req, res) => {
             return errorResponse(res, "Lo sentimos, tu correo no está autorizado. Contacta al administrador.", 403);
         }
 
-        const esPasswordPorDefecto = await bcrypt.compare('', estudianteBDD.password); 
         
+        const esPasswordPorDefecto = await bcrypt.compare('', estudianteBDD.password); 
+
         if (!esPasswordPorDefecto) {
             return errorResponse(res, "Esta cuenta ya se encuentra activa", 400);
-        }        
+        }
 
         estudianteBDD.telefono = telefono
         estudianteBDD.password = await estudianteBDD.encryptPassword(password);
