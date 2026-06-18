@@ -282,7 +282,23 @@ const eliminarEvento = async (req, res) => {
 
 const listarEventos = async (req, res) => {
     try {
-        const eventosBDD = await Evento.find().sort({ createdAt: -1 })
+        const { page = 1, limit = 10, search } = req.query
+        const pageNum = parseInt(page)
+        const limitNum = parseInt(limit)
+        const filter = {}
+        if (search) {
+            const regex = new RegExp(search, 'i')
+            filter.$or = [
+                { nombre: regex },
+                { informacion: regex },
+                { ubicacion: regex },
+                { categoria: regex }
+            ]
+        }
+        const eventosBDD = await Evento.find(filter)
+            .sort({ createdAt: -1 })
+            .skip((pageNum - 1) * limitNum)
+            .limit(limitNum)
         return successResponse(res, eventosBDD)
     } catch (error) {
         return errorResponse(res, error.message)
