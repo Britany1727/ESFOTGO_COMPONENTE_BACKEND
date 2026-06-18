@@ -11,6 +11,8 @@ import routerMapa from './routers/Mapa_routes.js';
 import routerAuth from './routers/Auth_routes.js';
 import routerTutoria from './routers/Tutoria_routes.js';
 import routerBus from './routers/Bus_routes.js';
+import routerFavorito from './routers/Favorito_routes.js';
+import routerChat from './routers/Chat_routes.js';
 
 const app = express()
 
@@ -55,6 +57,8 @@ app.use('/api', routerMapa)
 app.use('/api', routerAuth)
 app.use('/api', routerTutoria)
 app.use('/api', routerBus)
+app.use('/api', routerFavorito)
+app.use('/api', routerChat)
 
 // Servir frontend-test estático
 app.use('/test', express.static('frontend-test'));
