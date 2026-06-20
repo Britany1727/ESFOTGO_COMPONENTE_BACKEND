@@ -4,6 +4,7 @@ import Oficina from "../models/Oficinas.js";
 import Evento from "../models/Evento.js";
 import Nodo from "../models/Nodo.js";
 import Conexion from "../models/Conexion.js";
+import Favorito from "../models/Favorito.js";
 import { calcularRuta, obtenerGrafoCompleto } from "../services/routing.service.js";
 import { subirImagenCloudinary } from "../helpers/uploadCloudinary.js";
 import { successResponse, errorResponse } from "../helpers/response.js";
@@ -287,8 +288,16 @@ export const eliminarEdificio = async (req, res) => {
         const edificio = await Edificio.findById(id);
         if (!edificio) return errorResponse(res, "El edificio no existe", 404);
 
-        await Nodo.updateMany({ edificioId: id }, { activo: false });
+        const nodos = await Nodo.find({ edificioId: id }).select('_id');
+        const nodoIds = nodos.map(n => n._id);
+
+        await Conexion.deleteMany({ $or: [{ nodoOrigen: { $in: nodoIds } }, { nodoDestino: { $in: nodoIds } }] });
+        await Aula.deleteMany({ edificio: id });
+        await Oficina.deleteMany({ edificio: id });
+        await Nodo.deleteMany({ edificioId: id });
+        await Favorito.deleteMany({ item_tipo: 'edificio', item_id: id });
         await edificio.deleteOne();
+
         return successResponse(res, null, "Edificio eliminado correctamente");
     } catch (error) {
         return errorResponse(res, `Error al eliminar edificio - ${error.message}`);
