@@ -1,5 +1,6 @@
 import Ubicacion from "../models/Ubicacion.js"
 import { successResponse, errorResponse } from "../helpers/response.js"
+import { subirBase64Ubicacion } from "../helpers/uploadCloudinary.js"
 
 export const listarUbicaciones = async (req, res) => {
   try {
@@ -44,7 +45,17 @@ export const crearUbicacion = async (req, res) => {
     if (!nombre || !categoria || latitud === undefined || longitud === undefined) {
       return errorResponse(res, "Debes proporcionar nombre, categoria, latitud y longitud", 400)
     }
-    const nuevaUbicacion = new Ubicacion({ nombre, descripcion, categoria, latitud, longitud, imagen })
+
+    let imagenFinal = imagen || ''
+    if (imagen && imagen.startsWith('data:')) {
+      try {
+        imagenFinal = await subirBase64Ubicacion(imagen)
+      } catch (err) {
+        console.error('Error al subir imagen 360 a Cloudinary:', err.message)
+      }
+    }
+
+    const nuevaUbicacion = new Ubicacion({ nombre, descripcion, categoria, latitud, longitud, imagen: imagenFinal })
     await nuevaUbicacion.save()
     return successResponse(res, nuevaUbicacion, "Ubicación creada correctamente", 201)
   } catch (error) {
@@ -67,7 +78,17 @@ export const actualizarUbicacion = async (req, res) => {
     if (categoria !== undefined) ubicacion.categoria = categoria
     if (latitud !== undefined) ubicacion.latitud = latitud
     if (longitud !== undefined) ubicacion.longitud = longitud
-    if (imagen !== undefined) ubicacion.imagen = imagen
+    if (imagen !== undefined) {
+      if (imagen.startsWith('data:')) {
+        try {
+          ubicacion.imagen = await subirBase64Ubicacion(imagen)
+        } catch (err) {
+          console.error('Error al subir imagen 360 a Cloudinary:', err.message)
+        }
+      } else {
+        ubicacion.imagen = imagen
+      }
+    }
 
     await ubicacion.save()
     return successResponse(res, ubicacion, "Ubicación actualizada correctamente")

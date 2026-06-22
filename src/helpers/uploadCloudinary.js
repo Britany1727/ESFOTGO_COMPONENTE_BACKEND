@@ -75,6 +75,15 @@ const subirBase64Evento = async (base64) => {
     return await subirBase64Cloudinary(base64, "Eventos")
 }
 
+// Subir imágenes 360 de Ubicaciones
+const subirImagenUbicacion = async (filePath) => {
+    return await subirImagenCloudinary(filePath, "Ubicaciones360")
+}
+
+const subirBase64Ubicacion = async (base64) => {
+    return await subirBase64Cloudinary(base64, "Ubicaciones360")
+}
+
 
 
 export {
@@ -91,5 +100,7 @@ export {
     subirImagenDocente,
     subirBase64Docente,
     subirImagenEstudiante,
-    subirBase64Estudiante
+    subirBase64Estudiante,
+    subirImagenUbicacion,
+    subirBase64Ubicacion
 }
