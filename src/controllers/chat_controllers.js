@@ -14,11 +14,23 @@ export const getMessages = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { room, from, text } = req.body
-    if (!from || !text) {
-      return errorResponse(res, "Debes proporcionar from y text", 400)
+    const { text, room } = req.body
+    if (!text) {
+      return errorResponse(res, "Debes proporcionar text", 400)
     }
-    const mensaje = new Mensaje({ text, from, room: room || 'general' })
+
+    const usuario = req.adminHeader || req.docenteHeader
+    const from = usuario
+      ? `${usuario.nombre || ''}${usuario.apellido ? ' ' + usuario.apellido : ''}`.trim() || 'Usuario'
+      : 'Invitado'
+
+    const mensaje = new Mensaje({
+      text,
+      from,
+      room: room || 'general',
+      senderId: usuario?._id?.toString(),
+      senderRol: usuario?.rol
+    })
     await mensaje.save()
     return successResponse(res, mensaje, "Mensaje enviado", 201)
   } catch (error) {

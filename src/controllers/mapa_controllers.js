@@ -1,4 +1,3 @@
-import Edificio from "../models/Edificio.js";
 import Aula from "../models/Aulas.js";
 import Oficina from "../models/Oficinas.js";
 import Evento from "../models/Evento.js";
@@ -9,30 +8,11 @@ import { calcularRuta, obtenerGrafoCompleto } from "../services/routing.service.
 import { subirImagenCloudinary } from "../helpers/uploadCloudinary.js";
 import { successResponse, errorResponse } from "../helpers/response.js";
 
-export const obtenerAreaEsfot = async (req, res) => {
-    try {
-        const edificios = await Edificio.find().select('nombre codigo centro poligono pisos imagen descripcion');
-        const poligonos = edificios.map(e => ({
-            _id: e._id,
-            nombre: e.nombre,
-            codigo: e.codigo,
-            centro: e.centro,
-            poligono: e.poligono,
-            pisos: e.pisos,
-            imagen: e.imagen,
-            descripcion: e.descripcion
-        }));
-        return successResponse(res, poligonos);
-    } catch (error) {
-        return errorResponse(res, `Error al obtener el área de ESFOT - ${error.message}`);
-    }
-};
-
 export const obtenerPuntosMapa = async (req, res) => {
     try {
-        const aulas = await Aula.find().populate('edificio', 'nombre codigo');
-        const oficinas = await Oficina.find().populate('edificio', 'nombre codigo');
-        const eventos = await Evento.find({ fecha: { $gte: new Date() } }).populate('edificio', 'nombre codigo');
+        const aulas = await Aula.find();
+        const oficinas = await Oficina.find();
+        const eventos = await Evento.find({ fecha: { $gte: new Date() } });
 
         const puntos = [
             ...aulas.map(a => ({
@@ -42,7 +22,6 @@ export const obtenerPuntosMapa = async (req, res) => {
                 ubicacion: a.ubicacion,
                 piso: a.piso,
                 coordenadas: a.coordenadas,
-                edificio: a.edificio,
                 imagen: a.imagen,
                 modelo: 'Aula'
             })),
@@ -53,7 +32,6 @@ export const obtenerPuntosMapa = async (req, res) => {
                 ubicacion: o.ubicacion,
                 piso: o.piso,
                 coordenadas: o.coordenadas,
-                edificio: o.edificio,
                 encargado: o.encargado,
                 telefono: o.telefono,
                 imagen: o.imagen,
@@ -107,12 +85,11 @@ export const obtenerRuta = async (req, res) => {
 
 export const obtenerNodosNavegacion = async (req, res) => {
     try {
-        const { edificioId, piso } = req.query;
+        const { piso } = req.query;
         const filter = { activo: true };
-        if (edificioId) filter.edificioId = edificioId;
         if (piso) filter.piso = parseInt(piso);
 
-        const nodos = await Nodo.find(filter).populate('edificioId', 'nombre codigo');
+        const nodos = await Nodo.find(filter);
         return successResponse(res, nodos);
     } catch (error) {
         return errorResponse(res, `Error al obtener nodos - ${error.message}`);
@@ -121,8 +98,7 @@ export const obtenerNodosNavegacion = async (req, res) => {
 
 export const obtenerGrafo = async (req, res) => {
     try {
-        const { edificioId } = req.query;
-        const grafo = await obtenerGrafoCompleto(edificioId || null);
+        const grafo = await obtenerGrafoCompleto();
         return successResponse(res, grafo);
     } catch (error) {
         return errorResponse(res, `Error al obtener grafo - ${error.message}`);
@@ -139,11 +115,11 @@ export const buscarDestino = async (req, res) => {
         const regex = new RegExp(q, 'i');
         const aulas = await Aula.find({
             $or: [{ numero: regex }, { ubicacion: regex }, { tipo: regex }]
-        }).populate('edificio', 'nombre codigo').limit(10);
+        }).limit(10);
 
         const oficinas = await Oficina.find({
             $or: [{ numero: regex }, { ubicacion: regex }, { encargado: regex }]
-        }).populate('edificio', 'nombre codigo').limit(10);
+        }).limit(10);
 
         const resultados = [
             ...aulas.map(a => ({
@@ -153,7 +129,6 @@ export const buscarDestino = async (req, res) => {
                 ubicacion: a.ubicacion,
                 piso: a.piso,
                 coordenadas: a.coordenadas,
-                edificio: a.edificio?.nombre || '',
                 modelo: 'Aula'
             })),
             ...oficinas.map(o => ({
@@ -163,7 +138,6 @@ export const buscarDestino = async (req, res) => {
                 ubicacion: o.ubicacion,
                 piso: o.piso,
                 coordenadas: o.coordenadas,
-                edificio: o.edificio?.nombre || '',
                 encargado: o.encargado,
                 modelo: 'Oficina'
             }))
@@ -177,7 +151,7 @@ export const buscarDestino = async (req, res) => {
 
 export const crearNodo = async (req, res) => {
     try {
-        let { nombre, tipo, coordenadas, piso, edificioId, referenciaId, referenciaModelo, label, latitude, longitude } = req.body;
+        let { nombre, tipo, coordenadas, piso, referenciaId, referenciaModelo, label, latitude, longitude } = req.body;
 
         if (!nombre && label) nombre = label;
         if (!coordenadas && latitude !== undefined && longitude !== undefined) {
@@ -189,7 +163,7 @@ export const crearNodo = async (req, res) => {
             return errorResponse(res, "Debes llenar todos los campos", 400);
         }
 
-        const nuevoNodo = new Nodo({ nombre, tipo, coordenadas, piso, edificioId, referenciaId, referenciaModelo });
+        const nuevoNodo = new Nodo({ nombre, tipo, coordenadas, piso, referenciaId, referenciaModelo });
         await nuevoNodo.save();
         return successResponse(res, { nodo: nuevoNodo }, "Nodo de navegación creado correctamente", 201);
     } catch (error) {
@@ -219,91 +193,6 @@ export const crearConexion = async (req, res) => {
     }
 };
 
-export const crearEdificio = async (req, res) => {
-    try {
-        const { nombre, codigo, descripcion, centro, poligono, pisos } = req.body;
-
-        if (!nombre || !codigo || !centro || !poligono) {
-            return errorResponse(res, "Debes proporcionar nombre, codigo, centro y poligono", 400);
-        }
-
-        const existente = await Edificio.findOne({ codigo });
-        if (existente) {
-            return errorResponse(res, "El código del edificio ya existe", 400);
-        }
-
-        const nuevoEdificio = new Edificio({ nombre, codigo, descripcion, centro, poligono, pisos });
-        await nuevoEdificio.save();
-        return successResponse(res, { edificio: nuevoEdificio }, "Edificio creado correctamente", 201);
-    } catch (error) {
-        return errorResponse(res, `Error al crear edificio - ${error.message}`);
-    }
-};
-
-export const listarEdificios = async (req, res) => {
-    try {
-        const edificios = await Edificio.find().sort({ nombre: 1 });
-        return successResponse(res, edificios);
-    } catch (error) {
-        return errorResponse(res, `Error al listar edificios - ${error.message}`);
-    }
-};
-
-export const verEdificio = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const edificio = await Edificio.findById(id);
-        if (!edificio) return errorResponse(res, "El edificio no existe", 404);
-        return successResponse(res, edificio);
-    } catch (error) {
-        return errorResponse(res, `Error al ver edificio - ${error.message}`);
-    }
-};
-
-export const actualizarEdificio = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { nombre, descripcion, centro, poligono, pisos, imagen } = req.body;
-
-        const edificio = await Edificio.findById(id);
-        if (!edificio) return errorResponse(res, "El edificio no existe", 404);
-
-        if (nombre) edificio.nombre = nombre;
-        if (descripcion) edificio.descripcion = descripcion;
-        if (centro) edificio.centro = centro;
-        if (poligono) edificio.poligono = poligono;
-        if (pisos) edificio.pisos = pisos;
-        if (imagen) edificio.imagen = imagen;
-
-        await edificio.save();
-        return successResponse(res, { edificio }, "Edificio actualizado correctamente");
-    } catch (error) {
-        return errorResponse(res, `Error al actualizar edificio - ${error.message}`);
-    }
-};
-
-export const eliminarEdificio = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const edificio = await Edificio.findById(id);
-        if (!edificio) return errorResponse(res, "El edificio no existe", 404);
-
-        const nodos = await Nodo.find({ edificioId: id }).select('_id');
-        const nodoIds = nodos.map(n => n._id);
-
-        await Conexion.deleteMany({ $or: [{ nodoOrigen: { $in: nodoIds } }, { nodoDestino: { $in: nodoIds } }] });
-        await Aula.deleteMany({ edificio: id });
-        await Oficina.deleteMany({ edificio: id });
-        await Nodo.deleteMany({ edificioId: id });
-        await Favorito.deleteMany({ item_tipo: 'edificio', item_id: id });
-        await edificio.deleteOne();
-
-        return successResponse(res, null, "Edificio eliminado correctamente");
-    } catch (error) {
-        return errorResponse(res, `Error al eliminar edificio - ${error.message}`);
-    }
-};
-
 export const subirFotoPanoramica = async (req, res) => {
     try {
         const { id } = req.params;
@@ -330,8 +219,7 @@ export const obtenerVista360 = async (req, res) => {
         const { id } = req.params;
         const nodo = await Nodo.findById(id).populate({
             path: 'hotspots.nodoDestino',
-            select: 'nombre tipo coordenadas piso imagenPano edificioId',
-            populate: { path: 'edificioId', select: 'nombre codigo' }
+            select: 'nombre tipo coordenadas piso imagenPano'
         });
         if (!nodo) return errorResponse(res, "Nodo no encontrado", 404);
         if (!nodo.imagenPano) return errorResponse(res, "Este nodo no tiene imagen panorámica", 404);
@@ -342,7 +230,6 @@ export const obtenerVista360 = async (req, res) => {
             tipo: nodo.tipo,
             coordenadas: nodo.coordenadas,
             piso: nodo.piso,
-            edificioId: nodo.edificioId,
             imagenPano: nodo.imagenPano,
             hotspots: nodo.hotspots
         });
@@ -353,14 +240,12 @@ export const obtenerVista360 = async (req, res) => {
 
 export const listarNodos360 = async (req, res) => {
     try {
-        const { edificioId, piso } = req.query;
+        const { piso } = req.query;
         const filter = { imagenPano: { $ne: null }, activo: true };
-        if (edificioId) filter.edificioId = edificioId;
         if (piso) filter.piso = parseInt(piso);
 
         const nodos = await Nodo.find(filter)
-            .select('nombre tipo coordenadas piso edificioId imagenPano')
-            .populate('edificioId', 'nombre codigo');
+            .select('nombre tipo coordenadas piso imagenPano');
         return successResponse(res, nodos);
     } catch (error) {
         return errorResponse(res, `Error al listar nodos 360 - ${error.message}`);
@@ -452,3 +337,5 @@ export const eliminarHotspot = async (req, res) => {
         return errorResponse(res, `Error al eliminar hotspot - ${error.message}`);
     }
 };
+
+

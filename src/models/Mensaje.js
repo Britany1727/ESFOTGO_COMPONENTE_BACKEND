@@ -14,6 +14,12 @@ const mensajeSchema = new Schema({
   room: {
     type: String,
     trim: true
+  },
+  senderId: {
+    type: String
+  },
+  senderRol: {
+    type: String
   }
 }, {
   timestamps: { createdAt: 'timestamp', updatedAt: false },

@@ -16,7 +16,7 @@ const favoritoSchema = new Schema({
   },
   item_tipo: {
     type: String,
-    enum: ['aula', 'edificio', 'ruta', 'ubicacion'],
+    enum: ['aula', 'ruta', 'ubicacion'],
     required: true
   },
   item_nombre: {

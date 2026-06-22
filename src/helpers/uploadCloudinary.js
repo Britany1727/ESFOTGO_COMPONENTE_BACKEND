@@ -48,15 +48,6 @@ const subirImagenAdmin = async (filePath) => {
 const subirBase64Admin = async (base64) => {
     return await subirBase64Cloudinary(base64, "Administradores")
 }
-// Subir imágenes de edificios
-const subirImagenEdificio = async (filePath) => {
-    return await subirImagenCloudinary(filePath, "Edificios")
-}
-
-const subirBase64Edificio = async (base64) => {
-    return await subirBase64Cloudinary(base64, "Edificios")
-}
-
 // Subir imágenes de oficinas
 const subirImagenOficina = async (filePath) => {
     return await subirImagenCloudinary(filePath, "Oficinas")
@@ -89,8 +80,6 @@ const subirBase64Evento = async (base64) => {
 export {
     subirImagenCloudinary,
     subirBase64Cloudinary,
-    subirImagenEdificio,
-    subirBase64Edificio,
     subirImagenOficina,
     subirBase64Oficina,
     subirImagenAula,

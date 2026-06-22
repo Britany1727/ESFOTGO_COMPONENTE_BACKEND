@@ -4,7 +4,6 @@ import { crearTokenJWT, crearRefreshTokenJWT, guardarRefreshToken } from "../mid
 import { successResponse, errorResponse } from "../helpers/response.js"
 import mongoose from "mongoose"
 import { subirImagenEstudiante, subirBase64Estudiante } from "../helpers/uploadCloudinary.js"
-import bcrypt from "bcryptjs"
 
 const registroEstudiante = async (req, res) => {
     try {
@@ -15,17 +14,12 @@ const registroEstudiante = async (req, res) => {
         }
 
         const estudianteBDD = await Estudiante.findOne({ email });
-        console.log('Password en BDD:', estudianteBDD.password);
 
         if (!estudianteBDD) {
             return errorResponse(res, "Lo sentimos, tu correo no está autorizado. Contacta al administrador.", 403);
         }
 
-        
-        const esPasswordPorDefecto = await bcrypt.compare('', estudianteBDD.password);
-        console.log('¿Es password por defecto?', esPasswordPorDefecto); 
-
-        if (!esPasswordPorDefecto) {
+        if (estudianteBDD.password !== null) {
             return errorResponse(res, "Esta cuenta ya se encuentra activa", 400);
         }
 

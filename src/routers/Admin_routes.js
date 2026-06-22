@@ -5,7 +5,7 @@ import { validarEvento, validarAula, validarMiddleware } from '../middlewares/va
 import { uploadExcel } from '../controllers/upload_controllers.js'
 import { actualizarPerfilDocente } from '../controllers/docente_controllers.js'
 import { actualizarPerfilEstudiante } from '../controllers/estudiante_controllers.js'
-import { subirFotoPanoramica, crearEdificio, listarEdificios, verEdificio, actualizarEdificio, eliminarEdificio } from '../controllers/mapa_controllers.js';
+import { subirFotoPanoramica } from '../controllers/mapa_controllers.js';
 
 
 const routerAdmins= Router()
@@ -28,12 +28,6 @@ routerAdmins.delete('/admin/eliminarevento/:id',eliminarEvento)
 routerAdmins.get('/eventos',listarEventos)
 routerAdmins.get('/verevento/:id',verificarTokenJWT,verEvento)
 
-//EDIFICIOS
-routerAdmins.post('/admin/edificio', verificarTokenJWT, crearEdificio)
-routerAdmins.get('/admin/edificios', verificarTokenJWT, listarEdificios)
-routerAdmins.get('/admin/edificio/:id', verificarTokenJWT, verEdificio)
-routerAdmins.put('/admin/edificio/:id', verificarTokenJWT, actualizarEdificio)
-routerAdmins.delete('/admin/edificio/:id', verificarTokenJWT, eliminarEdificio)
 //OFICINAS
 routerAdmins.post('/admin/oficina',verificarTokenJWT,crearOficinas)
 routerAdmins.get('/oficinas',verificarTokenJWT,listarOficinas)
@@ -77,10 +71,5 @@ routerAdmins.post('/admin/upload',verificarTokenJWT,uploadExcel)
 
 //MAPA
 routerAdmins.post('/admin/subirfotopanoramica/:id',verificarTokenJWT,subirFotoPanoramica)
-routerAdmins.post('/admin/mapa/edificio', verificarTokenJWT, crearEdificio)
-routerAdmins.get('/admin/mapa/edificios', verificarTokenJWT, listarEdificios)
-routerAdmins.get('/admin/mapa/edificio/:id', verificarTokenJWT, verEdificio)
-routerAdmins.put('/admin/mapa/edificio/:id', verificarTokenJWT, actualizarEdificio)
-routerAdmins.delete('/admin/mapa/edificio/:id', verificarTokenJWT, eliminarEdificio)
 
 export default routerAdmins

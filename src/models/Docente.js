@@ -23,7 +23,7 @@ const docenteSchema = new Schema({
     },
     password:{
         type:String,
-        required:true
+        default:null
     },
     oficina:{
         type:Schema.Types.ObjectId,

@@ -26,11 +26,6 @@ const aulaSchema = new Schema({
         enum: ['disponible', 'ocupado', 'mantenimiento'],
         default: 'disponible'
     },
-    edificio: {
-        type: Schema.Types.ObjectId,
-        ref: 'Edificio',
-        required: true
-    },
     imagen: {
         type: String,
         trim: true
@@ -47,7 +42,5 @@ const aulaSchema = new Schema({
     timestamps: true,
     collection: 'aulas'
 })
-
-aulaSchema.index({ edificio: 1, numero: 1 })
 
 export default model('Aula', aulaSchema)

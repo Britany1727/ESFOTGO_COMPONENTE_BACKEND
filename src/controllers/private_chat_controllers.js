@@ -4,6 +4,7 @@ import Estudiante from "../models/Estudiante.js"
 import Docente from "../models/Docente.js"
 import Admin from "../models/Admin.js"
 import { successResponse, errorResponse } from "../helpers/response.js"
+import { getIO } from "../helpers/socket.js"
 
 const obtenerUsuario = (req) => {
   if (req.adminHeader) return { id: req.adminHeader._id.toString(), tipo: 'admin' }
@@ -115,6 +116,19 @@ export const sendPrivateMessage = async (req, res) => {
       lastMessage: text,
       lastMessageAt: mensaje.timestamp
     })
+
+    try {
+      getIO().to(`conv-${conversationId}`).emit('mensaje-privado-recibido', {
+        _id: mensaje._id,
+        conversationId: mensaje.conversationId,
+        senderId: mensaje.senderId,
+        senderName: mensaje.senderName,
+        text: mensaje.text,
+        timestamp: mensaje.timestamp
+      })
+    } catch (err) {
+      console.error('Error al emitir mensaje privado por socket:', err.message)
+    }
 
     return successResponse(res, mensaje, "Mensaje enviado", 201)
   } catch (error) {

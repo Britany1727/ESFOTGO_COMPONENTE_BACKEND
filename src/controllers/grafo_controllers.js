@@ -4,17 +4,7 @@ import { successResponse, errorResponse } from "../helpers/response.js"
 
 export const listarAristas = async (req, res) => {
   try {
-    const { edificioId } = req.query
-    const filter = { activo: true }
-    if (edificioId) {
-      const nodos = await Nodo.find({ edificioId }).select('_id')
-      const nodoIds = nodos.map(n => n._id)
-      filter.$or = [
-        { nodoOrigen: { $in: nodoIds } },
-        { nodoDestino: { $in: nodoIds } }
-      ]
-    }
-    const aristas = await Conexion.find(filter)
+    const aristas = await Conexion.find({ activo: true })
       .populate('nodoOrigen', 'nombre tipo coordenadas piso')
       .populate('nodoDestino', 'nombre tipo coordenadas piso')
     return successResponse(res, aristas)

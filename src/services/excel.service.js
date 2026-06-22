@@ -1,5 +1,4 @@
 import XLSX from 'xlsx';
-import bcrypt from 'bcryptjs';
 import Docente from '../models/Docente.js';
 import Estudiante from '../models/Estudiante.js';
 
@@ -31,8 +30,7 @@ const processExcel = async (filePath, tipo) => {
   return -1;
 })();
   const Modelo = tipo === 'docente' ? Docente : Estudiante;
-  const defaultPassword = tipo === 'docente' ? '' : '';
-  const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+  const hashedPassword = null;
 
   const errores = [];
   const guardados = [];

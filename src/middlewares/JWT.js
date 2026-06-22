@@ -24,6 +24,19 @@ const guardarRefreshToken = async (userId, userType, token) => {
   return refreshToken
 }
 
+const verificarRolesPermitidos = (...rolesPermitidos) => {
+  return (req, res, next) => {
+    const usuario = req.adminHeader || req.docenteHeader || req.userHeader
+    if (!usuario) {
+      return res.status(401).json({ success: false, message: "Acceso denegado: no autenticado" })
+    }
+    if (!rolesPermitidos.includes(usuario.rol)) {
+      return res.status(403).json({ success: false, message: "Acceso denegado: rol no autorizado" })
+    }
+    next()
+  }
+}
+
 const verificarTokenJWT = async (req, res, next) => {
   const { authorization } = req.headers
   if (!authorization) {
@@ -61,5 +74,6 @@ export {
   crearTokenJWT,
   crearRefreshTokenJWT,
   guardarRefreshToken,
-  verificarTokenJWT
+  verificarTokenJWT,
+  verificarRolesPermitidos
 }

@@ -20,11 +20,6 @@ const nodoSchema = new Schema({
         type: Number,
         default: 1
     },
-    edificioId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Edificio',
-        required: true
-    },
     referenciaId: {
         type: Schema.Types.ObjectId,
         refPath: 'referenciaModelo'
@@ -55,7 +50,6 @@ const nodoSchema = new Schema({
     collection: 'nodos'
 });
 
-nodoSchema.index({ edificioId: 1, piso: 1 });
 nodoSchema.index({ 'coordenadas': '2dsphere' });
 
 export default model('Nodo', nodoSchema);

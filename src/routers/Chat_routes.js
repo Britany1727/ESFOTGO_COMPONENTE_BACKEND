@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { verificarTokenJWT } from '../middlewares/JWT.js';
+import { verificarTokenJWT, verificarRolesPermitidos } from '../middlewares/JWT.js';
 import {
     getMessages,
     sendMessage
@@ -13,9 +13,9 @@ import {
 
 const routerChat = Router();
 
-// Chat general (público - opcional JWT)
-routerChat.get('/chat/messages', getMessages);
-routerChat.post('/chat/messages', sendMessage);
+// Chat general (solo admin y docente)
+routerChat.get('/chat/messages', verificarTokenJWT, verificarRolesPermitidos('admin', 'docente'), getMessages);
+routerChat.post('/chat/messages', verificarTokenJWT, verificarRolesPermitidos('admin', 'docente'), sendMessage);
 
 // Chat privado (requiere JWT)
 routerChat.post('/chat/conversation', verificarTokenJWT, getOrCreateConversation);

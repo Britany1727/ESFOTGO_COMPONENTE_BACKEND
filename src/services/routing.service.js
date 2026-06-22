@@ -178,24 +178,9 @@ export async function calcularRuta(origenLat, origenLng, destinoId, destinoTipo)
     return result;
 }
 
-export async function obtenerNodosPorEdificio(edificioId) {
-    return await Nodo.find({ edificioId, activo: true }).sort({ piso: 1, nombre: 1 });
-}
-
-export async function obtenerGrafoCompleto(edificioId) {
-    const nodos = await Nodo.find(
-        edificioId ? { edificioId, activo: true } : { activo: true }
-    );
-    const conexiones = await Conexion.find(
-        edificioId ? { activo: true } : { activo: true }
-    );
-
-    const conexionesFiltradas = edificioId
-        ? conexiones.filter(c => {
-            const ids = nodos.map(n => n._id.toString());
-            return ids.includes(c.nodoOrigen.toString()) && ids.includes(c.nodoDestino.toString());
-          })
-        : conexiones;
+export async function obtenerGrafoCompleto() {
+    const nodos = await Nodo.find({ activo: true });
+    const conexiones = await Conexion.find({ activo: true });
 
     return {
         nodos: nodos.map(n => ({
@@ -204,10 +189,9 @@ export async function obtenerGrafoCompleto(edificioId) {
             tipo: n.tipo,
             coordenadas: n.coordenadas,
             piso: n.piso,
-            referenciaId: n.referenciaId,
-            edificioId: n.edificioId
+            referenciaId: n.referenciaId
         })),
-        conexiones: conexionesFiltradas.map(c => ({
+        conexiones: conexiones.map(c => ({
             _id: c._id,
             nodoOrigen: c.nodoOrigen,
             nodoDestino: c.nodoDestino,

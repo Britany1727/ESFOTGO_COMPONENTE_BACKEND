@@ -371,10 +371,10 @@ const eliminarDocente = async (req, res) => {
 
 const crearOficinas = async (req, res) => {
     try {
-        const { numero, ubicacion, encargado, telefono, edificio, piso, coordenadas } = req.body
-        if (!numero || !ubicacion || !edificio) return errorResponse(res, "Lo sentimos, debes llenar numero, ubicacion y edificio", 400)
+        const { numero, ubicacion, encargado, telefono, piso, coordenadas } = req.body
+        if (!numero || !ubicacion) return errorResponse(res, "Lo sentimos, debes llenar numero y ubicacion", 400)
 
-        const nuevaOficina = new Oficina({ numero, ubicacion, encargado, telefono, edificio, piso, coordenadas })
+        const nuevaOficina = new Oficina({ numero, ubicacion, encargado, telefono, piso, coordenadas })
 
         if (req.files?.subirImagenOficina) {
             const { secure_url } = await subirImagenOficina(req.files.subirImagenOficina.tempFilePath)
@@ -415,7 +415,7 @@ const verOficina = async (req, res) => {
 const actualizarOficina = async (req, res) => {
     try {
         const { id } = req.params
-        const { numero, ubicacion, encargado, telefono, edificio, piso, coordenadas } = req.body
+        const { numero, ubicacion, encargado, telefono, piso, coordenadas } = req.body
 
         if (Object.values(req.body).includes("")) return errorResponse(res, "Lo sentimos, debes llenar todos los campos", 400)
 
@@ -426,7 +426,6 @@ const actualizarOficina = async (req, res) => {
         oficinaBDD.ubicacion = ubicacion || oficinaBDD.ubicacion
         oficinaBDD.encargado = encargado || oficinaBDD.encargado
         oficinaBDD.telefono = telefono || oficinaBDD.telefono
-        oficinaBDD.edificio = edificio || oficinaBDD.edificio
         oficinaBDD.piso = piso || oficinaBDD.piso
         oficinaBDD.coordenadas = coordenadas || oficinaBDD.coordenadas
 
@@ -465,12 +464,12 @@ const eliminarOficina = async (req, res) => {
 
 const crearAulas = async (req, res) => {
     try {
-        const { numero, nombre, ubicacion, tipo, piso, coordenadas, edificio, estado } = req.body
-        if (!numero || !ubicacion || !tipo || !edificio) {
-            return errorResponse(res, "Lo sentimos, debes llenar numero, ubicacion, tipo y edificio", 400)
+        const { numero, nombre, ubicacion, tipo, piso, coordenadas, estado } = req.body
+        if (!numero || !ubicacion || !tipo) {
+            return errorResponse(res, "Lo sentimos, debes llenar numero, ubicacion y tipo", 400)
         }
 
-        const nuevaAula = new Aula({ numero, nombre: nombre || numero, ubicacion, tipo, piso, coordenadas, edificio, estado })
+        const nuevaAula = new Aula({ numero, nombre: nombre || numero, ubicacion, tipo, piso, coordenadas, estado })
 
         if (req.files?.subirImagenAula) {
             const { secure_url } = await subirImagenAula(req.files.subirImagenAula.tempFilePath)
@@ -491,7 +490,7 @@ const crearAulas = async (req, res) => {
 const actualizarAula = async (req, res) => {
     try {
         const { id } = req.params
-        const { numero, nombre, ubicacion, tipo, piso, coordenadas, edificio, estado } = req.body
+        const { numero, nombre, ubicacion, tipo, piso, coordenadas, estado } = req.body
 
         if (Object.values(req.body).includes("")) return errorResponse(res, "Lo sentimos, debes llenar todos los campos", 400)
 
@@ -504,7 +503,6 @@ const actualizarAula = async (req, res) => {
         if (tipo !== undefined) aulaBDD.tipo = tipo
         if (piso !== undefined) aulaBDD.piso = piso
         if (coordenadas !== undefined) aulaBDD.coordenadas = coordenadas
-        if (edificio !== undefined) aulaBDD.edificio = edificio
         if (estado !== undefined) aulaBDD.estado = estado
 
         if (req.files?.subirImagenAula) {
@@ -525,7 +523,7 @@ const actualizarAula = async (req, res) => {
 
 const listarAulas = async (req, res) => {
     try {
-        const aulasBDD = await Aula.find().populate('edificio', 'nombre codigo').sort({ createdAt: -1 })
+        const aulasBDD = await Aula.find().sort({ createdAt: -1 })
         return successResponse(res, aulasBDD)
     } catch (error) {
         return errorResponse(res, error.message)
@@ -535,7 +533,7 @@ const listarAulas = async (req, res) => {
 const verAula = async (req, res) => {
     try {
         const { id } = req.params
-        const aulaBDD = await Aula.findById(id).populate('edificio', 'nombre codigo')
+        const aulaBDD = await Aula.findById(id)
         if (!aulaBDD) return errorResponse(res, "El aula no existe", 404)
         return successResponse(res, aulaBDD)
     } catch (error) {

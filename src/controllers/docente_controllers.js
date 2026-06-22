@@ -4,7 +4,6 @@ import { crearTokenJWT, crearRefreshTokenJWT, guardarRefreshToken } from "../mid
 import { successResponse, errorResponse } from "../helpers/response.js"
 import mongoose from "mongoose"
 import { subirImagenDocente, subirBase64Docente } from "../helpers/uploadCloudinary.js"
-import bcrypt from "bcryptjs"
 
 
 
@@ -22,10 +21,7 @@ const registroDocente = async (req, res) => {
             return errorResponse(res, "Lo sentimos, tu correo no está autorizado. Contacta al administrador.", 403);
         }
 
-        
-        const esPasswordPorDefecto = await bcrypt.compare('', docenteBDD.password); 
-
-        if (!esPasswordPorDefecto) {
+        if (docenteBDD.password !== null) {
             return errorResponse(res, "Esta cuenta ya se encuentra activa", 400);
         }
 

@@ -32,12 +32,6 @@ const oficinaSchema = new Schema({
         lat: { type: Number },
         lng: { type: Number }
     },
-    edificio: {
-        type: Schema.Types.ObjectId,
-        ref: 'Edificio',
-        required: true
-
-    }
 }
 ,{
     timestamps: true,

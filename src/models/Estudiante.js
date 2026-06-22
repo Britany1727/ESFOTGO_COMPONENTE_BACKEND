@@ -33,7 +33,7 @@ const estudianteSchema = new Schema({
     },
     password:{
         type:String,
-        required:true
+        default:null
     },
 
     status:{
