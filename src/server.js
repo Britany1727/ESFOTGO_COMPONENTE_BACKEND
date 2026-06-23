@@ -24,8 +24,19 @@ cloudinary.config({
 })
 
 // --- MIDDLEWARES (ORDEN CRÍTICO) ---
+const CORS_ORIGINS = process.env.CORS_ORIGINS
+    ? process.env.CORS_ORIGINS.split(',')
+    : [
+        "http://localhost:5173",
+        "http://localhost:8081",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:8081",
+        "http://172.31.116.73:5173",
+        "http://172.31.116.73:8081",
+    ];
+
 app.use(cors({
-    origin: ["http://localhost:5173", "http://172.31.116.73:5173", "http://127.0.0.1:5173"],
+    origin: CORS_ORIGINS,
     credentials: true
 }))
 

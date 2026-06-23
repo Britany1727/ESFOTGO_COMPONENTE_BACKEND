@@ -110,3 +110,21 @@
 ### `src/controllers/docente_controllers.js`
 - Mismo fix: `bcrypt.compare('', docenteBDD.password)` → `docenteBDD.password !== null`
 - Eliminado import de `bcrypt`
+
+---
+
+## 8. Campos imagen_360 y tipo_media en Ubicacion + CORS
+
+### `src/models/Ubicacion.js`
+- Agregado campo `imagen_360` (String, trim, default: null)
+- Agregado campo `tipo_media` (String, trim, default: null)
+
+### `src/controllers/ubicacion_controllers.js`
+- `crearUbicacion`: ahora acepta `imagen_360`/`image360` y `tipo_media`/`mediaType`
+- `imagen_360` se sube a Cloudinary si viene como base64
+- `actualizarUbicacion`: ahora actualiza `imagen_360` y `tipo_media` condicionalmente
+- Soporta dual snake_case / camelCase para compatibilidad con frontend
+
+### `src/server.js`
+- CORS actualizado: agregados orígenes `localhost:8081`, `127.0.0.1:8081` para Expo
+- Ahora soporta variable de entorno `CORS_ORIGINS` (lista separada por comas)
