@@ -1,7 +1,7 @@
+import { Types } from "mongoose"
 import Tutoria from "../models/Tutorias.js"
 import Inscripcion from "../models/Inscripcion.js"
 import Estudiante from "../models/Estudiante.js"
-import Docente from "../models/Docente.js"
 import { successResponse, errorResponse } from "../helpers/response.js"
 import {
   sendMailNotificationInscripcionDocente,
@@ -290,6 +290,13 @@ export const desinscribirTutoria = async (req, res) => {
       return errorResponse(res, "Debes proporcionar el ID del estudiante", 400)
     }
 
+    if (!Types.ObjectId.isValid(id)) {
+      return errorResponse(res, "ID de tutoría inválido", 400)
+    }
+    if (!Types.ObjectId.isValid(estudiante_id)) {
+      return errorResponse(res, "ID de estudiante inválido", 400)
+    }
+
     const inscripcion = await Inscripcion.findOne({ tutoria_id: id, estudiante_id })
     if (!inscripcion) {
       return errorResponse(res, "No estás inscrito en esta tutoría", 404)
@@ -303,9 +310,12 @@ export const desinscribirTutoria = async (req, res) => {
       }
     }
 
-    await inscripcion.deleteOne()
+    await Inscripcion.deleteOne({ _id: inscripcion._id })
     return successResponse(res, null, "Inscripción cancelada correctamente")
   } catch (error) {
+    if (error.name === 'CastError') {
+      return errorResponse(res, "ID inválido", 400)
+    }
     return errorResponse(res, error.message)
   }
 }
