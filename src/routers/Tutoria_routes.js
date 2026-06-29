@@ -39,5 +39,6 @@ routerTutoria.put('/docente/tutoria/:id/inscripcion/:inscripcionId/aceptar', ver
 routerTutoria.put('/docente/tutoria/:id/inscripcion/:inscripcionId/rechazar', verificarTokenJWT, rechazarInscripcion)
 
 routerTutoria.get('/estudiante/tutorias/inscripciones', verificarTokenJWT, listarInscripcionesEstudiante)
+routerTutoria.delete('/estudiante/tutoria/:id/inscribir', verificarTokenJWT, desinscribirTutoria)
 
 export default routerTutoria
