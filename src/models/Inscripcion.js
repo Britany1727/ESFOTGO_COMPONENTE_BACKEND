@@ -10,6 +10,11 @@ const inscripcionSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Estudiante',
     required: true
+  },
+  estado: {
+    type: String,
+    enum: ['pendiente', 'aceptado', 'rechazado'],
+    default: 'pendiente'
   }
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: false },

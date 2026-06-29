@@ -152,7 +152,6 @@ const actualizarPerfilAdmin = async (req, res) => {
 
         const adminBDD = await Admin.findById(id);
         if (!adminBDD) return errorResponse(res, "No existe el administrador", 404);
-        if (Object.values(req.body).includes("")) return errorResponse(res, "Debes llenar todos los campos", 400);
 
         if (adminBDD.email !== email) {
             const emailExistente = await Admin.findOne({ email });
@@ -280,6 +279,22 @@ const eliminarEvento = async (req, res) => {
     }
 }
 
+const toggleStatusEvento = async (req, res) => {
+    try {
+        const { id } = req.params
+        const eventoBDD = await Evento.findById(id)
+        if (!eventoBDD) return errorResponse(res, "El evento no existe", 404)
+
+        eventoBDD.status = !eventoBDD.status
+        await eventoBDD.save()
+
+        const estado = eventoBDD.status ? 'activado' : 'inactivado'
+        return successResponse(res, { _id: eventoBDD._id, status: eventoBDD.status }, `Evento ${estado} correctamente`)
+    } catch (error) {
+        return errorResponse(res, error.message)
+    }
+}
+
 const listarEventos = async (req, res) => {
     try {
         const { page = 1, limit = 10, search } = req.query
@@ -360,6 +375,22 @@ const eliminarDocente = async (req, res) => {
 
         await docenteBDD.deleteOne()
         return successResponse(res, null, "Docente eliminado correctamente")
+    } catch (error) {
+        return errorResponse(res, error.message)
+    }
+}
+
+const toggleStatusDocente = async (req, res) => {
+    try {
+        const { id } = req.params
+        const docenteBDD = await Docente.findById(id)
+        if (!docenteBDD) return errorResponse(res, "El docente no existe", 404)
+
+        docenteBDD.status = !docenteBDD.status
+        await docenteBDD.save()
+
+        const estado = docenteBDD.status ? 'activado' : 'inactivado'
+        return successResponse(res, { _id: docenteBDD._id, status: docenteBDD.status }, `Docente ${estado} correctamente`)
     } catch (error) {
         return errorResponse(res, error.message)
     }
@@ -603,6 +634,22 @@ const eliminarEstudiante = async (req, res) => {
     }
 }
 
+const toggleStatusEstudiante = async (req, res) => {
+    try {
+        const { id } = req.params
+        const estudianteBDD = await Estudiante.findById(id)
+        if (!estudianteBDD) return errorResponse(res, "El estudiante no existe", 404)
+
+        estudianteBDD.status = !estudianteBDD.status
+        await estudianteBDD.save()
+
+        const estado = estudianteBDD.status ? 'activado' : 'inactivado'
+        return successResponse(res, { _id: estudianteBDD._id, status: estudianteBDD.status }, `Estudiante ${estado} correctamente`)
+    } catch (error) {
+        return errorResponse(res, error.message)
+    }
+}
+
 const crearEstudianteAdmin = async (req, res) => {
     try {
         const { nombre, apellido, email, telefono, password } = req.body
@@ -653,12 +700,14 @@ export {
     crearEvento,
     actualizarEvento,
     eliminarEvento,
+    toggleStatusEvento,
     listarEventos,
     verEvento,
     listarDocentes,
     verDocente,
     buscarDocente,
     eliminarDocente,
+    toggleStatusDocente,
     crearOficinas,
     listarOficinas,
     verOficina,
@@ -673,6 +722,7 @@ export {
     verEstudiante,
     buscarEstudiante,   
     eliminarEstudiante,
+    toggleStatusEstudiante,
     crearEstudianteAdmin,
     crearDocenteAdmin
 }

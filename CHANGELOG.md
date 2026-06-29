@@ -113,6 +113,18 @@
 
 ---
 
+## 9. Fix actualizar imagen de administrador
+
+### `src/controllers/admin_controllers.js`
+- Eliminada validación `Object.values(req.body).includes("")` en `actualizarPerfilAdmin` — bloqueaba la actualización de solo imagen porque los campos de texto iban vacíos en multipart/form-data
+- Esta validación no existía en `actualizarPerfilDocente` ni `actualizarPerfilEstudiante`, por eso ellos sí funcionaban
+- Agregadas funciones `toggleStatusEstudiante` y `toggleStatusDocente` para activar/inactivar usuarios
+
+### `src/routers/Admin_routes.js`
+- Agregadas rutas `PUT /admin/estudiante/:id/toggle-status` y `PUT /admin/docente/:id/toggle-status`
+
+---
+
 ## 8. Campos imagen_360 y tipo_media en Ubicacion + CORS
 
 ### `src/models/Ubicacion.js`

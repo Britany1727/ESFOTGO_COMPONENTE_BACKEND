@@ -6,9 +6,9 @@ const tutoriaSchema = new Schema({
     trim: true
   },
   docente: {
-    type: String,
-    required: true,
-    trim: true
+    type: Schema.Types.ObjectId,
+    ref: 'Docente',
+    required: true
   },
   oficina: {
     type: String,

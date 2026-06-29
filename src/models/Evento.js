@@ -1,5 +1,4 @@
 import {Schema, model} from 'mongoose'
-import bcrypt from "bcryptjs"
 
 const eventoSchema = new Schema({
     nombre:{
@@ -50,6 +49,10 @@ const eventoSchema = new Schema({
         type:String,
         required:false,
         trim:true
+    },
+    status:{
+        type:Boolean,
+        default:true
     }
 },{
     timestamps:true,

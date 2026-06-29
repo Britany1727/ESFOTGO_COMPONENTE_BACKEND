@@ -1,5 +1,5 @@
 import {Router} from 'express'
-import { actualizarAula, actualizarEvento, actualizarOficina, actualizarPasswordAdmin, actualizarPerfilAdmin, buscarDocente, buscarEstudiante, comprobarTokenPasswordAdmin, crearAulas, crearEvento, crearNuevoPasswordAdmin, crearOficinas, eliminarAula, eliminarDocente, eliminarEstudiante, eliminarEvento, eliminarOficina, listarAulas, listarDocentes, listarEstudiantes, listarEventos, listarOficinas, loginAdmin, perfilAdmin, recuperarPasswordAdmin, registroAdmin, verAula, verDocente, verEstudiante, verEvento, verOficina, crearEstudianteAdmin, crearDocenteAdmin } from '../controllers/admin_controllers.js'
+import { actualizarAula, actualizarEvento, actualizarOficina, actualizarPasswordAdmin, actualizarPerfilAdmin, buscarDocente, buscarEstudiante, comprobarTokenPasswordAdmin, crearAulas, crearEvento, crearNuevoPasswordAdmin, crearOficinas, eliminarAula, eliminarDocente, eliminarEstudiante, eliminarEvento, eliminarOficina, listarAulas, listarDocentes, listarEstudiantes, listarEventos, listarOficinas, loginAdmin, perfilAdmin, recuperarPasswordAdmin, registroAdmin, toggleStatusDocente, toggleStatusEstudiante, toggleStatusEvento, verAula, verDocente, verEstudiante, verEvento, verOficina, crearEstudianteAdmin, crearDocenteAdmin } from '../controllers/admin_controllers.js'
 import { verificarTokenJWT } from '../middlewares/JWT.js'
 import { validarEvento, validarAula, validarMiddleware } from '../middlewares/validators.js'
 import { uploadExcel } from '../controllers/upload_controllers.js'
@@ -24,6 +24,7 @@ routerAdmins.put('/admin/actualizarpassword/:id',verificarTokenJWT,actualizarPas
 //EVENTOS
 routerAdmins.post('/admin/evento', validarMiddleware(validarEvento), crearEvento)
 routerAdmins.put('/admin/actualizarevento/:id',actualizarEvento)
+routerAdmins.put('/admin/evento/:id/toggle-status',verificarTokenJWT,toggleStatusEvento)
 routerAdmins.delete('/admin/eliminarevento/:id',eliminarEvento)
 routerAdmins.get('/eventos',listarEventos)
 routerAdmins.get('/verevento/:id',verificarTokenJWT,verEvento)
@@ -52,6 +53,7 @@ routerAdmins.delete('/eliminarestudiante/:id',verificarTokenJWT,eliminarEstudian
 routerAdmins.delete('/admin/eliminarestudiante/:id',verificarTokenJWT,eliminarEstudiante)
 routerAdmins.put('/actualizarEstudiante/:id',verificarTokenJWT,actualizarPerfilEstudiante)
 routerAdmins.put('/admin/actualizarEstudiante/:id',verificarTokenJWT,actualizarPerfilEstudiante)
+routerAdmins.put('/admin/estudiante/:id/toggle-status',verificarTokenJWT,toggleStatusEstudiante)
 routerAdmins.post('/admin/crearEstudiante',verificarTokenJWT,crearEstudianteAdmin)
 
 //
@@ -64,6 +66,7 @@ routerAdmins.delete('/eliminardocente/:id',verificarTokenJWT,eliminarDocente)
 routerAdmins.delete('/admin/eliminardocente/:id',verificarTokenJWT,eliminarDocente)
 routerAdmins.put('/actualizarDocente/:id',verificarTokenJWT,actualizarPerfilDocente)
 routerAdmins.put('/admin/actualizardocente/:id',verificarTokenJWT,actualizarPerfilDocente)
+routerAdmins.put('/admin/docente/:id/toggle-status',verificarTokenJWT,toggleStatusDocente)
 routerAdmins.post('/admin/crearDocente',verificarTokenJWT,crearDocenteAdmin)
 //CARGA MASIVA DE DOCENTES Y ESTUDIANTESs
 routerAdmins.post('/admin/upload',verificarTokenJWT,uploadExcel)
