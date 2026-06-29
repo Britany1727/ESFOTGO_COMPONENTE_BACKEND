@@ -195,7 +195,11 @@ export const desinscribirTutoria = async (req, res) => {
     }
 
     if (inscripcion.estado === 'aceptado') {
-      return errorResponse(res, "No puedes cancelar una inscripción ya aceptada. Contacta al docente.", 400)
+      const tutoria = await Tutoria.findById(id)
+      if (tutoria && tutoria.estado === 'completo') {
+        tutoria.estado = 'activo'
+        await tutoria.save()
+      }
     }
 
     await inscripcion.deleteOne()
