@@ -20,6 +20,21 @@ export const listarTutorias = async (req, res) => {
   }
 }
 
+export const listarTutoriasDocente = async (req, res) => {
+  try {
+    const docenteId = req.docenteHeader?._id
+    if (!docenteId) {
+      return errorResponse(res, "Solo un docente puede ver sus tutorías", 403)
+    }
+    const tutorias = await Tutoria.find({ docente: docenteId })
+      .populate('docente', 'nombre apellido email telefono imagen')
+      .sort({ created_at: -1 })
+    return successResponse(res, tutorias)
+  } catch (error) {
+    return errorResponse(res, error.message)
+  }
+}
+
 export const verTutoria = async (req, res) => {
   try {
     const { id } = req.params
@@ -92,6 +107,92 @@ export const eliminarTutoria = async (req, res) => {
     if (!tutoria) {
       return errorResponse(res, "La tutoría no existe", 404)
     }
+    await Inscripcion.deleteMany({ tutoria_id: id })
+    await tutoria.deleteOne()
+    return successResponse(res, null, "Tutoría eliminada correctamente")
+  } catch (error) {
+    return errorResponse(res, error.message)
+  }
+}
+
+export const actualizarTutoriaDocente = async (req, res) => {
+  try {
+    const { id } = req.params
+    const docenteId = req.docenteHeader?._id
+    if (!docenteId) {
+      return errorResponse(res, "Solo un docente puede editar sus tutorías", 403)
+    }
+
+    const tutoria = await Tutoria.findById(id)
+    if (!tutoria) {
+      return errorResponse(res, "La tutoría no existe", 404)
+    }
+    if (tutoria.docente.toString() !== docenteId.toString()) {
+      return errorResponse(res, "No eres el docente de esta tutoría", 403)
+    }
+
+    const { titulo, oficina, informacion, horarios, fecha, duracion, cupo_maximo } = req.body
+
+    if (titulo !== undefined) tutoria.titulo = titulo
+    if (oficina !== undefined) tutoria.oficina = oficina
+    if (informacion !== undefined) tutoria.informacion = informacion
+    if (horarios !== undefined) tutoria.horarios = horarios
+    if (fecha !== undefined) tutoria.fecha = fecha
+    if (duracion !== undefined) tutoria.duracion = duracion
+    if (cupo_maximo !== undefined) tutoria.cupo_maximo = cupo_maximo
+
+    await tutoria.save()
+
+    const tutoriaPoblada = await Tutoria.findById(tutoria._id)
+      .populate('docente', 'nombre apellido email telefono imagen')
+
+    return successResponse(res, tutoriaPoblada, "Tutoría actualizada correctamente")
+  } catch (error) {
+    return errorResponse(res, error.message)
+  }
+}
+
+export const cancelarTutoriaDocente = async (req, res) => {
+  try {
+    const { id } = req.params
+    const docenteId = req.docenteHeader?._id
+    if (!docenteId) {
+      return errorResponse(res, "Solo un docente puede cancelar sus tutorías", 403)
+    }
+
+    const tutoria = await Tutoria.findById(id)
+    if (!tutoria) {
+      return errorResponse(res, "La tutoría no existe", 404)
+    }
+    if (tutoria.docente.toString() !== docenteId.toString()) {
+      return errorResponse(res, "No eres el docente de esta tutoría", 403)
+    }
+
+    tutoria.estado = 'inactivo'
+    await tutoria.save()
+
+    return successResponse(res, null, "Tutoría cancelada correctamente")
+  } catch (error) {
+    return errorResponse(res, error.message)
+  }
+}
+
+export const eliminarTutoriaDocente = async (req, res) => {
+  try {
+    const { id } = req.params
+    const docenteId = req.docenteHeader?._id
+    if (!docenteId) {
+      return errorResponse(res, "Solo un docente puede eliminar sus tutorías", 403)
+    }
+
+    const tutoria = await Tutoria.findById(id)
+    if (!tutoria) {
+      return errorResponse(res, "La tutoría no existe", 404)
+    }
+    if (tutoria.docente.toString() !== docenteId.toString()) {
+      return errorResponse(res, "No eres el docente de esta tutoría", 403)
+    }
+
     await Inscripcion.deleteMany({ tutoria_id: id })
     await tutoria.deleteOne()
     return successResponse(res, null, "Tutoría eliminada correctamente")

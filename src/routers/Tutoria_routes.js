@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { verificarTokenJWT } from '../middlewares/JWT.js'
 import {
   listarTutorias,
+  listarTutoriasDocente,
   verTutoria,
   crearTutoria,
   actualizarTutoria,
@@ -12,7 +13,10 @@ import {
   aceptarInscripcion,
   rechazarInscripcion,
   listarInscripcionesDocente,
-  listarInscripcionesEstudiante
+  listarInscripcionesEstudiante,
+  actualizarTutoriaDocente,
+  cancelarTutoriaDocente,
+  eliminarTutoriaDocente
 } from '../controllers/tutoria_controllers.js'
 
 const routerTutoria = Router()
@@ -26,6 +30,10 @@ routerTutoria.get('/admin/tutoria/:id/inscripciones', verificarTokenJWT, listarI
 routerTutoria.post('/admin/tutoria/:id/inscribir', verificarTokenJWT, inscribirTutoria)
 routerTutoria.delete('/admin/tutoria/:id/inscribir', verificarTokenJWT, desinscribirTutoria)
 
+routerTutoria.get('/docente/tutorias', verificarTokenJWT, listarTutoriasDocente)
+routerTutoria.put('/docente/tutoria/:id', verificarTokenJWT, actualizarTutoriaDocente)
+routerTutoria.patch('/docente/tutoria/:id/cancelar', verificarTokenJWT, cancelarTutoriaDocente)
+routerTutoria.delete('/docente/tutoria/:id', verificarTokenJWT, eliminarTutoriaDocente)
 routerTutoria.get('/docente/tutorias/inscripciones', verificarTokenJWT, listarInscripcionesDocente)
 routerTutoria.put('/docente/tutoria/:id/inscripcion/:inscripcionId/aceptar', verificarTokenJWT, aceptarInscripcion)
 routerTutoria.put('/docente/tutoria/:id/inscripcion/:inscripcionId/rechazar', verificarTokenJWT, rechazarInscripcion)
