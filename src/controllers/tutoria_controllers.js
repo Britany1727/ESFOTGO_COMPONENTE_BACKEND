@@ -3,11 +3,7 @@ import Tutoria from "../models/Tutorias.js"
 import Inscripcion from "../models/Inscripcion.js"
 import Estudiante from "../models/Estudiante.js"
 import { successResponse, errorResponse } from "../helpers/response.js"
-import {
-  sendMailNotificationInscripcionDocente,
-  sendMailNotificationInscripcionEstudianteAceptada,
-  sendMailNotificationInscripcionEstudianteRechazada
-} from "../helpers/sendMail.js"
+import { sendMailNotificationInscripcionDocente } from "../helpers/sendMail.js"
 
 export const listarTutorias = async (req, res) => {
   try {
@@ -204,10 +200,17 @@ export const eliminarTutoriaDocente = async (req, res) => {
 export const inscribirTutoria = async (req, res) => {
   try {
     const { id } = req.params
-    const estudiante_id = req.body.estudiante_id || req.userHeader?._id
+    const estudiante_id = req.body?.estudiante_id || req.userHeader?._id
 
     if (!estudiante_id) {
       return errorResponse(res, "Debes proporcionar el ID del estudiante", 400)
+    }
+
+    if (!Types.ObjectId.isValid(id)) {
+      return errorResponse(res, "ID de tutoría inválido", 400)
+    }
+    if (!Types.ObjectId.isValid(estudiante_id)) {
+      return errorResponse(res, "ID de estudiante inválido", 400)
     }
 
     const tutoria = await Tutoria.findById(id).populate('docente', 'nombre apellido email')
@@ -284,7 +287,7 @@ export const listarInscripciones = async (req, res) => {
 export const desinscribirTutoria = async (req, res) => {
   try {
     const { id } = req.params
-    const estudiante_id = req.body.estudiante_id || req.userHeader?._id
+    const estudiante_id = req.body?.estudiante_id || req.userHeader?._id
 
     if (!estudiante_id) {
       return errorResponse(res, "Debes proporcionar el ID del estudiante", 400)
@@ -376,15 +379,6 @@ export const aceptarInscripcion = async (req, res) => {
       }
     }
 
-    if (inscripcion.estudiante_id?.email) {
-      const nombreEstudiante = `${inscripcion.estudiante_id.nombre || ''} ${inscripcion.estudiante_id.apellido || ''}`.trim()
-      sendMailNotificationInscripcionEstudianteAceptada(
-        inscripcion.estudiante_id.email,
-        nombreEstudiante,
-        tutoria.titulo
-      ).catch(err => console.error("Error enviando notificación al estudiante:", err.message))
-    }
-
     const inscripcionPoblada = await Inscripcion.findById(inscripcion._id)
       .populate('estudiante_id', 'nombre apellido email telefono imagen')
 
@@ -428,15 +422,6 @@ export const rechazarInscripcion = async (req, res) => {
 
     inscripcion.estado = 'rechazado'
     await inscripcion.save()
-
-    if (inscripcion.estudiante_id?.email) {
-      const nombreEstudiante = `${inscripcion.estudiante_id.nombre || ''} ${inscripcion.estudiante_id.apellido || ''}`.trim()
-      sendMailNotificationInscripcionEstudianteRechazada(
-        inscripcion.estudiante_id.email,
-        nombreEstudiante,
-        tutoria.titulo
-      ).catch(err => console.error("Error enviando notificación al estudiante:", err.message))
-    }
 
     const inscripcionPoblada = await Inscripcion.findById(inscripcion._id)
       .populate('estudiante_id', 'nombre apellido email telefono imagen')

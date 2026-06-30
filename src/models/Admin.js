@@ -36,6 +36,11 @@ const adminSchema = new Schema({
         type:String,
         default:null
     },
+    imagen:{
+        type: String,
+        trim: true,
+        default: null
+    },
     rol:{
         type:String,
         default:"admin"

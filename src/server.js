@@ -30,7 +30,8 @@ const CORS_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://127.0.0.1:8081",
     "https://esfotgo.onrender.com",
-    "https://esfotgo.netlify.app"
+    "https://esfotgo.netlify.app",
+    ""
 ];
 
 app.use(cors({
